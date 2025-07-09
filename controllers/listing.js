@@ -49,9 +49,11 @@ module.exports.createListing = async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
     newListing.image = { url, filename };
-    
-    newListing.geometry = 'Point';
-    newListing.coordinates = geoData.body.features[0].geometry.coordinates;
+
+    newListing.geometry = {
+        type: "Point",
+        coordinates: geoData.body.features[0].geometry.coordinates
+    };
 
     await newListing.save();
     req.flash("success", "New Listing Created");

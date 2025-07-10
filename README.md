@@ -97,10 +97,5 @@ App will run at: `http://localhost:3000`
 * 📈 Admin dashboard for analytics
 * ❤️ Wishlist / Favorites feature
 
----
-
-* Add README badges?
-* Create a sample `.env.example` file?
-* Suggest screenshots with layout captions for the listings, review section, and map?
-
-Let me know and I’ll get that done too!
+## Screenshots
+<img width="1891" height="859" alt="Screenshot 2025-07-10 203601" src="https://github.com/user-attachments/assets/dfcdf348-485d-43f8-bd65-408b0b4575f1" />

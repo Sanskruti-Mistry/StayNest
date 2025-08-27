@@ -88,14 +88,8 @@ App will run at: `http://localhost:3000`
 * 🔐 **Only Listing Owner** can:
 
   * Edit or delete their own listings
-
-
-## 🧠 Future Enhancements
-
-* 🛏 Booking calendar & availability system
-* 📌 Advanced search with filters (price range, location, date)
-* 📈 Admin dashboard for analytics
-* ❤️ Wishlist / Favorites feature
+## Live Link
+https://staynest-akum.onrender.com/listings
 
 ## Screenshots
 <img width="1891" height="859" alt="Screenshot 2025-07-10 203601" src="https://github.com/user-attachments/assets/dfcdf348-485d-43f8-bd65-408b0b4575f1" />
@@ -103,8 +97,6 @@ App will run at: `http://localhost:3000`
 <img width="1914" height="861" alt="Screenshot 2025-07-10 205305" src="https://github.com/user-attachments/assets/0a6bfdf1-d798-41cc-a3eb-5baec234ed0f" />
 
 <img width="1918" height="861" alt="Screenshot 2025-07-10 205532" src="https://github.com/user-attachments/assets/017c5015-be0b-4f18-96eb-a39af0e3a710" />
-
-<img width="935" height="589" alt="Screenshot 2025-07-10 205607" src="https://github.com/user-attachments/assets/5309b108-9f96-4d1e-a4eb-870b948208ad" />
 
 
 

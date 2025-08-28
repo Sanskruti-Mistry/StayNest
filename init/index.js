@@ -25,6 +25,8 @@
 
 // initDB();
 
+// init/index.js
+
 const mongoose = require('mongoose');
 const initData = require('./data.js');
 const Listing = require('../models/listing.js');
@@ -64,23 +66,21 @@ const initDB = async () => {
   await Listing.deleteMany({});
   for (let obj of initData.data) {
     const geometry = await getCoordinates(obj.location);
-
-    // ✅ Skip listings where geocoding failed
     if (!geometry) {
-      console.log(`Skipping listing "${obj.title}" due to missing coordinates`);
+      console.log(` Skipping "${obj.title}" due to missing coordinates`);
       continue;
     }
 
     const newListing = new Listing({
       ...obj,
-      owner: '6868ca5fc8b8a8cfea444d9f',
+      owner: '686df54a3f1d856c036328e3', // ✅ exact owner ID from Atlas
       geometry,
     });
 
     await newListing.save();
-    console.log(`✅ Saved: ${obj.title}`);
+    console.log(`Saved: ${obj.title}`);
   }
-  console.log('🎉 Database initialized with valid listings only!');
+  console.log('All listings saved with correct owner!');
 };
 
 main().then(() => initDB().then(() => mongoose.connection.close()));

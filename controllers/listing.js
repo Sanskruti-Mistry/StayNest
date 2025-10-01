@@ -3,9 +3,42 @@ const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
-module.exports.index = async(req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", {allListings});
+module.exports.index = async (req, res, next) => {
+  try {
+    let allListings = [];
+    const { q, filter } = req.query;  // Search + filter
+
+    let query = {};  // Build MongoDB query
+
+    if (q && q.trim()) {
+      const searchRegex = new RegExp(q.trim(), 'i');
+      query.$or = [
+        { title: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } },
+        { location: { $regex: searchRegex } },
+        { country: { $regex: searchRegex } }
+      ];
+    }
+
+    if (filter && filter !== 'all') {
+      query.category = filter;  // Exact match
+    }
+
+    // Special case: 'trending' could sort by date/price instead
+    if (filter === 'trending') {
+      allListings = await Listing.find({}).sort({ createdAt: -1 }).limit(10);  // Recent first (add createdAt to schema if missing)
+    } else {
+      allListings = await Listing.find(query).sort({ title: 1 });  // Alphabetical
+    }
+
+    res.render("listings/index.ejs", { 
+      allListings,
+      searchQuery: q || '',
+      activeFilter: filter || ''  // Pass for UI highlighting
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports.renderNewForm = (req,res) => {
@@ -23,7 +56,7 @@ module.exports.showListing = async(req, res) =>{
         })
         .populate("owner");
     if(!listing){
-        req.flash("error", "The Listing you requested for soes not exist!");
+        req.flash("error", "The Listing you requested for does not exist!");
         res.redirect("/listings");
     }
     console.log(listing);

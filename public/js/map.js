@@ -1,48 +1,38 @@
-// mapboxgl.accessToken = mapToken;
-
-// const map = new mapboxgl.Map({
-//     container: 'map', // container ID
-//     center: listing.geometry.coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
-//     zoom: 9 // starting zoom
-// });
-
-// const marker = new mapboxgl.Marker()({color: "red"})
-//     .setLngLat(listing.geometry.coordinates)
-//     .setPopup(new mapboxgl.Popup({offset: 25})
-//     .setHTML(
-//         `<h4>${listing.title}</h4><p>Exact location will be provided after booking</p>`
-//     ))
-//     .addTo(map);
-
-
-
-mapboxgl.accessToken = mapToken;
+mapboxgl.accessToken = mapToken;  // From show.ejs
 
 // ✅ Default fallback location (India center)
 const defaultCoordinates = [78.9629, 20.5937];
 
 let coordinates = defaultCoordinates;
-let hasCoordinates = false;
+let hasValidCoordinates = false;
 
-if (listing && listing.geometry && Array.isArray(listing.coordinates)) {
-    coordinates = listing.coordinates;
-    hasCoordinates = true;
+if (mapToken && listing && listing.geometry && Array.isArray(listing.geometry.coordinates) && listing.geometry.coordinates.length === 2) {
+    coordinates = listing.geometry.coordinates;
+    hasValidCoordinates = true;
+} else {
+    console.warn('Mapbox: Invalid or missing geometry.coordinates; using default. Check listing data.');
 }
 
 // ✅ Create the map
 const map = new mapboxgl.Map({
     container: 'map',
     center: coordinates,
-    zoom: 9,
+    zoom: hasValidCoordinates ? 12 : 4,  // Closer zoom if valid coords
 });
 
-// ✅ Conditionally add marker
-new mapboxgl.Marker({ color: hasCoordinates ? "red" : "gray" })
+// ✅ Add marker and popup
+const popupContent = hasValidCoordinates 
+    ? `<h4>${listing.title}</h4><p>${listing.location}, ${listing.country}</p><p>Exact location provided after booking</p>`
+    : `<h4>No Location Data</h4><p>Showing approximate area. Update listing for precise map.</p>`;
+
+new mapboxgl.Marker({ color: hasValidCoordinates ? "red" : "gray" })
     .setLngLat(coordinates)
-    .setPopup(
-        new mapboxgl.Popup({ offset: 25 }).setHTML(
-            `<h4>${listing.title}</h4>
-            <p>${hasCoordinates ? "Exact location will be provided after booking" : "Location not available, showing default"}</p>`
-        )
-    )
+    .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent))
     .addTo(map);
+
+// ✅ Optional: Fit map bounds if needed (e.g., add padding)
+map.on('load', () => {
+    if (!hasValidCoordinates) {
+        console.warn('Mapbox: Consider adding location to listing for better UX.');
+    }
+});

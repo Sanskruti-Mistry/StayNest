@@ -50,21 +50,21 @@ const store = MongoStore.create({
     touchAfter: 24 * 3600,
 });
 
-store.on("error", () => {
+store.on("error", (err) => {
     console.log("ERROR in MONGO SESSION STORE", err);
 });
 
 const sessionOptions = {
-    store,
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, //miliseconds of 1 week or 7 days
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-    }
-}
+  store,
+  secret: process.env.SECRET || 'fallback-dev-secret-only-for-local-testing',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  }
+};
 
 // app.get("/", (req, res)=>{
 //     res.send("HI!, I AM ROOT");
@@ -80,11 +80,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req,res,next) => {
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    res.locals.currUser = req.user;
-    next();
+app.use((req, res, next) => {
+  const success = (typeof req.flash === 'function') ? req.flash("success") || [] : [];
+  const error = (typeof req.flash === 'function') ? req.flash("error") || [] : [];
+  res.locals.success = success;
+  res.locals.error = error;
+  res.locals.currUser = req.user;
+  next();
 });
 
 app.use("/listings", listingRouter);
@@ -96,8 +98,21 @@ app.all("*", (req, res, next) => {
 });
 //custom error handling middleware
 app.use((err, req, res, next) => {
-    let { statusCode = 500, message = "Something went wrong" } = err;
-    res.status(statusCode).render("listings/error.ejs", { message });
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  
+  const success = (typeof req.flash === 'function') ? req.flash("success") || [] : [];
+  const error = (typeof req.flash === 'function') ? req.flash("error") || [] : [];
+  
+  res.locals.success = success;
+  res.locals.error = error;
+  res.locals.currUser = req.user || undefined;
+  
+  res.status(statusCode).render("listings/error.ejs", { 
+    message, 
+    success,
+    error,
+    currUser: req.user || undefined 
+  });
 });
 
 

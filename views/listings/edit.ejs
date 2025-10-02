@@ -56,7 +56,7 @@
             >
             <div class="invalid-feedback">Price should be valid</div>
         </div>
-        <div class="mb-3 col-md-8">
+        <div class="mb-3 col-md-4">
             <label for="country" class="form-label">Country</label>
             <input
              name="listing[country]"
@@ -67,6 +67,24 @@
              required
             >
             <div class="invalid-feedback">Country name should be valid</div>
+        </div>
+        <div class="mb-3 col-md-4">
+            <label for="category" class="form-label">Category</label>
+            <select name="listing[category]" id="category" class="form-select" required>
+                <option value="">Select a category</option>
+                <option value="trending" <%= listing.category === 'trending' ? 'selected' : '' %>>Trending</option>
+                <option value="rooms" <%= listing.category === 'rooms' ? 'selected' : '' %>>Rooms</option>
+                <option value="iconic-cities" <%= listing.category === 'iconic-cities' ? 'selected' : '' %>>Iconic Cities</option>
+                <option value="mountains" <%= listing.category === 'mountains' ? 'selected' : '' %>>Mountains</option>
+                <option value="castles" <%= listing.category === 'castles' ? 'selected' : '' %>>Castles</option>
+                <option value="pools" <%= listing.category === 'pools' ? 'selected' : '' %>>Amazing Pools</option>
+                <option value="camping" <%= listing.category === 'camping' ? 'selected' : '' %>>Camping</option>
+                <option value="farms" <%= listing.category === 'farms' ? 'selected' : '' %>>Farms</option>
+                <option value="arctic" <%= listing.category === 'arctic' ? 'selected' : '' %>>Arctic</option>
+                <option value="domes" <%= listing.category === 'domes' ? 'selected' : '' %>>Domes</option>
+                <option value="boats" <%= listing.category === 'boats' ? 'selected' : '' %>>Boats</option>
+            </select>
+            <div class="invalid-feedback">Please select a category</div>
         </div>
         </div>
         <div class="mb-3">
@@ -89,4 +107,3 @@
     </form>
     </div>
 </div>
-
